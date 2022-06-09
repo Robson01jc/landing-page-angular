@@ -7,11 +7,11 @@ import { ForecastService } from '../forecast.service';
   styleUrls: ['./forecast.component.css'],
 })
 export class ForecastComponent implements OnInit {
-  constructor(private forecastService: ForecastService) {}
-
-  ngOnInit(): void {
-    this.forecastService
-      .getForecast()
-      .subscribe((response) => console.log(response));
+  constructor(forecastService: ForecastService) {
+    forecastService.getForecast().subscribe((weatherResponse) => {
+      console.log(weatherResponse);
+    });
   }
+
+  ngOnInit(): void {}
 }

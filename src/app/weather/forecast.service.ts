@@ -1,16 +1,31 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, switchMap } from 'rxjs';
+import {
+  filter,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  pluck,
+  switchMap,
+  toArray,
+} from 'rxjs';
 
-interface Position {
-  latitude: number;
-  longitude: number;
+interface OpenWeatherResponse {
+  list: {
+    dt_txt: string;
+    main: {
+      temp: number;
+    };
+  }[];
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class ForecastService {
+  private url = 'https://api.openweathermap.org/data/2.5/forecast';
+
   constructor(private http: HttpClient) {}
 
   getForecast() {
@@ -22,12 +37,17 @@ export class ForecastService {
           .set('units', 'metric')
           .set('appid', 'f557b20727184231a597c710c8be3106');
       }),
-      switchMap((params: HttpParams) => {
-        return this.http.get(
-          `https://api.openweathermap.org/data/2.5/forecast`,
-          { params }
-        );
-      })
+      switchMap((params) =>
+        this.http.get<OpenWeatherResponse>(this.url, { params })
+      ),
+      pluck('list'),
+      mergeMap((value) => of(...value)),
+      filter((_, index) => index % 8 === 0),
+      map((value) => ({
+        dateString: value.dt_txt,
+        temp: value.main.temp,
+      })),
+      toArray()
     );
   }
 
