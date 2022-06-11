@@ -7,6 +7,7 @@ import {
   Observable,
   of,
   pluck,
+  share,
   switchMap,
   toArray,
 } from 'rxjs';
@@ -47,7 +48,8 @@ export class ForecastService {
         dateString: value.dt_txt,
         temp: value.main.temp,
       })),
-      toArray()
+      toArray(),
+      share()
     );
   }
 
