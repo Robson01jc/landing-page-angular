@@ -5,6 +5,9 @@ import { map, Observable, pluck, Subject, switchMap, tap } from 'rxjs';
 export interface Article {
   title: string;
   url: string;
+  source: {
+    name: string;
+  };
 }
 
 interface NewsApiResponse {
